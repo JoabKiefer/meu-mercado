@@ -1,5 +1,5 @@
 const PREFIX = 'meu-mercado-' + new URL(self.registration.scope).pathname + '-';
-const CACHE = PREFIX + 'v7';
+const CACHE = PREFIX + 'v8';
 const SHELL = ['./', './index.html', './receipt.js','./mobile.css','./cloud.js','./supabase-config.js','./vendor/supabase-2.119.0.js', './receipt-parser.js', './install.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 const urls = new Set(SHELL.map(path => new URL(path, self.registration.scope).href));
 self.addEventListener('install', event => {
