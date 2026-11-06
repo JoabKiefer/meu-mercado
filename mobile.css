@@ -12,3 +12,34 @@ body{background:#f4f7f3}header{gap:12px;padding-top:18px}header .brand{font-size
 .simple-list .item-options, .simple-list .item-summary, .simple-list .remove, .simple-list .inline-fields label:not(:nth-child(2)) {display:none}
 .simple-list .item-price-label {font-size:11px}
 .simple-list .item-p {margin:2px 0 0}
+
+.appearance-choice {margin:20px 0 0}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --page:#101813;
+  --panel:#1a251e;
+  --field:#111c15;
+  --tint:#253c2c;
+  --line:#475b4b;
+  --ink:#edf5ee;
+  --muted:#b9c9bc;
+  --accent:#a6e986;
+  background:var(--page);
+}
+[data-theme="dark"] body {background:var(--page);color:var(--ink)}
+[data-theme="dark"] :is(.box,.bottom-nav,.tool-grid button,#installCard,#accountDialog,#receipt,.item-options[open],#accountButton) {
+  background:var(--panel);color:var(--ink);border-color:var(--line)
+}
+[data-theme="dark"] :is(input,select,textarea,.inline-fields input) {
+  background-color:var(--field);color:var(--ink);border-color:var(--line)
+}
+[data-theme="dark"] :is(input,textarea)::placeholder {color:#a5b4a8}
+[data-theme="dark"] :is(small,.muted,.save-strip,.inline-fields label,.category-toggle,.item-category,.bottom-nav button,.item-options>summary,.row .remove) {color:var(--muted)}
+[data-theme="dark"] :is(.brand,.brand-market,output,.price-down,.text-button,#categoryCreator summary) {color:var(--accent)}
+[data-theme="dark"] :is(.secondary,.receipt-open,.base-shortcut,.quantity-stepper button,.category-heading,.bottom-nav button[aria-pressed=true],#installHelp:not([hidden]),#accountMessage:not(:empty),.item-options>summary:hover) {background:var(--tint);color:var(--accent)}
+[data-theme="dark"] :is(fieldset,.section,.row,.history-card,.history-item,.month-card) {border-color:var(--line)}
+[data-theme="dark"] .row.done {background:var(--field)}
+[data-theme="dark"] #receiptDrop {background:var(--field);border-color:var(--line)}
+[data-theme="dark"] #receiptDrop.dragging {background:var(--tint);border-color:var(--accent)}
+[data-theme="dark"] .price-up {color:#ffb592}
+[data-theme="dark"] :focus-visible {outline-color:var(--accent)}
