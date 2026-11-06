@@ -408,7 +408,7 @@ function renderBases(){
  if([...select.options].some(o=>o.value===old))select.value=old;
  $('savedBases').replaceChildren();
  if(!baseLists.length)$('savedBases').textContent='Você ainda não salvou uma lista base.';
- for(const base of baseLists){const card=document.createElement('article');card.className='month-card';const title=document.createElement('h3');title.textContent=base.name;const summary=document.createElement('p');summary.textContent=base.items.length+' produtos · '+base.days+' dias · '+base.people+' pessoa(s)';const use=document.createElement('button');use.type='button';use.textContent='Usar esta base';use.onclick=()=>{$('baseChoice').value=base.id;$('generateBase').elements.days.value=base.days;$('generateBase').elements.people.value=base.people;$('generateBase').scrollIntoView({behavior:'smooth',block:'center'});};card.append(title,summary,use);$('savedBases').append(card);}
+ for(const base of baseLists){const card=document.createElement('article');card.className='month-card';const title=document.createElement('h3');title.textContent=base.name;const summary=document.createElement('p');summary.textContent=base.items.length+' produtos · '+base.days+' dias · '+base.people+' pessoa(s)';const use=document.createElement('button');use.type='button';use.textContent='Usar esta base';use.onclick=()=>addBaseToList(base.items);card.append(title,summary,use);$('savedBases').append(card);}
 }
 function storeBase(name,products,days,people){
  if(!name.trim()||!products.length){$('baseStatus').textContent='Informe um nome e ao menos um produto para salvar.';return false;}
@@ -447,9 +447,33 @@ function readBaseDraft(){
  if(draft.some(i=>!i.name||!Number.isFinite(i.q)||i.q<=0)){$('baseStatus').textContent='Confira os nomes e quantidades.';return null;}return draft;
 }
 $('saveDraftBase').onclick=()=>{const draft=readBaseDraft();if(draft)storeBase($('draftBaseName').value,draft,draftPeriod.days,draftPeriod.people);};
-$('baseReview').onsubmit=e=>{e.preventDefault();const draft=readBaseDraft();if(!draft)return;
- const next=[...items,...draft.map(i=>({...i,p:null,discount:0,done:false}))];if(!persist(next,purchases))return;
- items=next;render();$('baseReview').hidden=true;$('baseDraftRows').replaceChildren();selectTab('lista');setBuilderOpen(false,true);$('status').textContent=draft.length+' produtos adicionados sem preços. Informe os valores atuais no mercado.';
+function addBaseToList(products) {
+  if (!products.length) {
+    $('baseStatus').textContent = 'Esta base está vazia.';
+    return;
+  }
+  const additions = products.map(({name, q, u, category}) => ({
+    name, q, u, category, p: null, discount: 0, done: false
+  }));
+  const next = [...items, ...additions];
+  if (!persist(next, purchases)) {
+    $('baseStatus').textContent = 'Não foi possível salvar os produtos neste aparelho. Tente novamente.';
+    return;
+  }
+  items = next;
+  render();
+  $('baseReview').hidden = true;
+  $('baseDraftRows').replaceChildren();
+  selectTab('lista');
+  setBuilderOpen(false, true);
+  $('status').textContent = additions.length === 1
+    ? '1 produto adicionado à sua lista.'
+    : additions.length + ' produtos adicionados à sua lista.';
+}
+$('baseReview').onsubmit = event => {
+  event.preventDefault();
+  const draft = readBaseDraft();
+  if (draft) addBaseToList(draft);
 };
 renderBases();
 
