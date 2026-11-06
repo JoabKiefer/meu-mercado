@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#00682c"><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Meu Mercado"><title>Meu Mercado • Lista de compras</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f7faf5;color:#173b28;font:16px system-ui,sans-serif}header,main{max-width:1050px;margin:auto;padding:20px 24px}header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #dcded0}b.brand{font:bold 30px Georgia;letter-spacing:-1.7px}.mark{display:inline-grid;place-items:center;background:#70d008;border-radius:12px;width:42px;height:42px;vertical-align:middle;margin-right:9px}small,.muted{color:#5d695e}main{padding-bottom:60px}.hero{background:#00682c;color:#ffffff;border-radius:24px;padding:34px 38px;position:relative;overflow:hidden;isolation:isolate}.hero h1{font:normal clamp(40px,6vw,66px)/1 Georgia;margin:0 0 18px;letter-spacing:-2.5px}.hero p{margin:0;color:#e5f5df}.hero svg{position:absolute;height:150%;right:0;top:-25%;z-index:-1;width:32%}nav{display:flex;gap:6px;border-bottom:1px solid #d4d9ca;margin:17px 0 22px}button,input,select{font:inherit}button{border:0;border-radius:10px;background:#00682c;color:white;font-weight:650;cursor:pointer;padding:11px 15px;min-height:44px}nav button{background:none;color:#516456;border-radius:0;padding:14px}nav button[aria-pressed=true]{color:#00682c;box-shadow:inset 0 -3px #00682c}.layout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:18px;align-items:start}.box,aside{background:#ffffff;border:1px solid #d9e5d5;border-radius:18px;padding:24px}h2,h3{margin:0 0 14px}h2{font:normal 31px Georgia;letter-spacing:-1px}label{font-size:13px;font-weight:650;display:block}input,select{display:block;width:100%;border:1px solid #b9ccb4;border-radius:8px;padding:10px;background:#fff;color:#173b28;margin-top:5px;min-height:44px}form,.fields{display:grid;gap:12px}.fields{grid-template-columns:1fr 1fr}form>button{justify-self:start}.row{display:flex;align-items:center;gap:10px;padding:13px 0;border-top:1px solid #dfe9da}.name{flex:1;overflow-wrap:anywhere}.row input{width:22px;height:22px;min-height:0;accent-color:#00682c}.row button{background:#edf7e9;color:#00552b}.row small{display:block}.row.done strong{text-decoration:line-through}.section{border-top:1px solid #d9e5d5;padding-top:18px;margin-top:22px}aside{background:#eaf7df}aside strong{display:block;font:40px Georgia;margin:8px 0}progress{width:100%;accent-color:#00682c;height:10px}fieldset{border:1px solid #d9e5d5;border-radius:12px;margin:0;padding:14px}legend{font-weight:bold}output{display:block;font-weight:bold;color:#00682c;margin-top:14px;line-height:1.55}dialog{border:1px solid #becaba;border-radius:18px;max-width:92vw;padding:24px}dialog::backdrop{background:#142e2580}[hidden]{display:none!important}:focus-visible{outline:3px solid #368800;outline-offset:2px}
+@media(max-width:700px){header,main{padding:15px}.layout{grid-template-columns:1fr}.hero{padding:26px 20px}.box,aside{padding:18px}nav{gap:0}nav button{flex:1;padding:12px 3px;font-size:14px}.hero svg{right:-7%;opacity:.7}.hero p{max-width:73%}}
+.row .edit{background:transparent;color:#00682c;text-decoration:underline;padding:0;font-size:14px}.row input[type=checkbox]{flex-shrink:0;cursor:pointer}
+.receipt-open{margin-bottom:22px;background:#eaf7df;color:#00682c}
+#receipt{width:760px;max-height:90dvh;overflow:auto;background:#ffffff;color:#173b28}
+.receipt-heading{display:flex;align-items:start;justify-content:space-between;gap:16px}
+.receipt-actions{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.secondary{background:#edf7e9;color:#00552b}
+button:disabled{opacity:.5;cursor:not-allowed}
+#receiptDrop{border:2px dashed #8ab87a;border-radius:14px;padding:20px;background:#f0f8eb;text-align:center}#receiptDrop.dragging{background:#70d008;border-color:#00682c}#receiptFilename{overflow-wrap:anywhere}#receiptPhoto{display:block;max-width:100%;max-height:320px;object-fit:contain;margin:16px auto}
+#receiptRows{display:grid;gap:14px}.receipt-item{display:grid;gap:10px;min-width:0}
+.receipt-source{overflow-wrap:anywhere}.receipt-item button{justify-self:start}
+#receipt textarea{width:100%;min-height:160px;margin-top:10px;font:14px monospace;padding:12px}
+#receipt details{margin:16px 0}#receipt summary{cursor:pointer}#receiptProgress{height:16px}
+.quantity-stepper{display:flex;gap:8px;align-items:center;margin-top:5px}.quantity-stepper input{margin:0;min-width:0;text-align:center}.quantity-stepper button{background:#edf7e9;color:#00682c;font-size:22px;padding:6px 14px}.quantity-help{grid-column:1/-1;display:block;margin:0}#addEstimate:empty{display:none}
+.row{align-items:flex-start}.row>input[type=checkbox]{margin-top:12px}.inline-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-top:10px}.inline-fields input{width:100%;height:auto;min-height:44px;max-width:none;cursor:text}.inline-fields label{min-width:0;font-size:12px}.item-summary{margin-top:4px}.row .remove{flex-shrink:0;margin-top:5px}
+#finishPurchase{width:100%}.history-card{border:1px solid #d9e5d5;border-radius:12px;padding:16px;margin:12px 0}.history-card summary{cursor:pointer;font-weight:650;line-height:1.6}.history-item{padding:12px 0;border-top:1px solid #dfe9da;overflow-wrap:anywhere}.history-item small{display:block;margin-top:4px}nav{flex-wrap:wrap}@media(max-width:420px){nav button{flex-basis:45%}}
+.month-card{border:1px solid #d9e5d5;border-radius:12px;padding:16px;margin-top:14px;overflow-wrap:anywhere}.month-card h3{font-size:17px;margin-bottom:10px}.month-card p{line-height:1.5;margin:8px 0}.price-up{color:#9c4023;font-weight:650}.price-down{color:#00682c;font-weight:650}
+
+/* Phone-first layout: the cart replaces the decorative banner. */
+header,main{max-width:600px;padding:14px 16px}header{border-bottom:0;padding-bottom:8px}b.brand{font-size:26px}.mark{width:34px;height:34px;border-radius:10px}header>small{font-size:12px}
+main{padding-top:6px;padding-bottom:calc(32px + env(safe-area-inset-bottom))}.layout{display:block}.box{padding:18px 14px;border-radius:16px}h2{font-size:28px}
+.cart-top{position:sticky;top:8px;z-index:5;background:#00682c;color:#ffffff;border-radius:18px;padding:16px;box-shadow:0 4px 14px #163c2920}.cart-top-line{display:flex;align-items:center;justify-content:space-between;gap:12px}.cart-top h1{font:600 14px system-ui;margin:0 0 5px}.cart-top #total{display:block;font:650 clamp(29px,8vw,38px)/1.15 system-ui;letter-spacing:-1px}.cart-top #finishPurchase{width:auto;max-width:46%;background:#70d008;color:#003e20;font-size:14px;padding:12px;min-height:48px}.cart-top #finishPurchase:disabled{opacity:.6}.cart-progress{display:flex;align-items:center;gap:12px;margin-top:12px}.cart-progress p{font-size:12px;margin:0;flex:1}.cart-progress progress{width:70px;height:8px;accent-color:#70d008}.cart-top>small{display:block;color:#e5f5df;font-size:11px;margin-top:5px}
+nav{display:flex;flex-wrap:nowrap;gap:0;overflow-x:auto;margin:12px 0 16px;scrollbar-width:thin}nav button{flex:1 0 auto;flex-basis:auto;min-width:0;padding:13px 9px;font-size:13px;white-space:nowrap;min-height:48px}
+input,select,textarea{font-size:16px;min-height:48px}.row{gap:10px;padding:16px 0}.row>input[type=checkbox]{width:28px;height:28px;min-height:28px}.row .remove{min-width:44px;min-height:44px;padding:8px}.inline-fields{gap:8px}.inline-fields input{min-height:48px;padding:10px 8px}.name{min-width:0}.receipt-open{width:100%;margin-bottom:18px;min-height:48px}
+#receipt{width:560px;max-width:calc(100vw - 20px);max-height:calc(100dvh - 20px);padding:18px}#receipt .receipt-heading h2{font-size:28px}.receipt-heading{gap:8px}.receipt-actions button{flex:1}#confirmReceipt{width:100%;justify-self:stretch;min-height:48px}
+@media(max-width:360px){header,main{padding-left:10px;padding-right:10px}.cart-top{padding:14px}.box{padding:16px 12px}nav button{padding-left:7px;padding-right:7px;font-size:12px}.inline-fields{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)}}
+#listReady{width:100%;margin-top:16px;min-height:48px}#toggleBuilder{position:fixed;right:max(16px,calc((100vw - 600px)/2 + 16px));bottom:calc(22px + env(safe-area-inset-bottom));z-index:6;width:52px;height:52px;border-radius:50%;font-size:30px;line-height:1;padding:0;box-shadow:0 4px 16px #163c2940}.shopping-mode .shopping-items{border-top:0;margin-top:0;padding-top:0}.shopping-mode{padding-bottom:64px}
+#toggleBuilder{width:auto;max-width:calc(100vw - 32px);height:48px;border-radius:24px;padding:0 18px;display:flex;align-items:center;gap:8px;font-size:14px;line-height:1.2}#toggleBuilder span{font-size:25px}
+.preference-check{display:flex;align-items:center;gap:10px}.preference-check input{width:24px;min-height:24px;margin:0}.base-draft{display:grid;gap:12px;margin:12px 0}.base-draft button{justify-self:start}#baseReview>button{width:100%}
+.base-shortcut{width:100%;min-height:48px;margin-bottom:16px}.category-toggle{margin:0 0 16px;font-size:14px}.category-heading{background:#edf7e9;border-radius:8px;padding:10px 12px;font-size:15px;margin:20px 0 0}.item-category{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:12px;color:#5d695e}.item-category select{flex:1;min-width:0;min-height:44px;margin:0;padding:8px;font-size:14px}
+:root{--brand-green:#00682c;--brand-lime:#70d008}.mark{color:#003e20}.cart-top{background:linear-gradient(120deg,#00682c,#004b2a)}.receipt-open,.base-shortcut{background:#eaf7df;color:#00552b}nav button[aria-pressed=true]{color:#00682c;box-shadow:inset 0 -3px #70d008}input[type=checkbox]{accent-color:#00682c}.category-heading{border-left:4px solid #70d008}.cart-top #finishPurchase{background:#70d008;color:#003e20}#toggleBuilder{background:#00682c;color:#ffffff}
+b.brand{display:flex;align-items:center;font-family:system-ui,sans-serif;font-weight:800;letter-spacing:-1px;color:#00682c}.brand-market{color:#00682c;text-decoration:underline;text-decoration-color:#70d008;text-decoration-thickness:4px;text-underline-offset:5px}
+.brand-icon{width:40px;height:40px;object-fit:contain;flex-shrink:0;margin-right:9px}.item-options{margin-top:4px}.item-options>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:44px;height:36px;margin-left:auto;font-size:24px;color:#5d695e;border-radius:8px}.item-options>summary::-webkit-details-marker{display:none}.item-options>summary:hover{background:#edf7e9}.item-options:not([open])>.item-category{display:none}.item-options[open]{padding-bottom:8px}
+.row .name{position:relative}.row .name>strong{display:block;padding-right:42px;min-height:32px}.item-options{position:absolute;right:0;top:-6px;margin:0;z-index:2}.item-options>summary{height:44px}.item-options[open]{width:min(260px,calc(100vw - 110px));background:white;border:1px solid #d9e5d5;border-radius:10px;padding:0 10px 12px;box-shadow:0 6px 20px #003e2020}.item-options .item-category{margin-top:0}#openInstall{font-size:12px;padding:8px 12px;min-height:44px}#installCard{max-width:568px;margin:8px auto 16px;background:#eaf7df;border:1px solid #b9ccb4;border-radius:16px;padding:18px}#installCard h2{font:700 20px system-ui;letter-spacing:0;margin-bottom:8px}#installCard p{font-size:14px;line-height:1.5}.install-actions{display:flex;gap:8px;flex-wrap:wrap}.install-actions button{min-height:44px}#installHelp{margin-bottom:0}@media(max-width:600px){#installCard{margin-left:16px;margin-right:16px}b.brand{font-size:23px}}
+
+#installCard{position:fixed;inset:0;margin:auto;width:calc(100% - 40px);max-width:360px;max-height:80dvh;box-sizing:border-box;padding:24px;box-shadow:0 20px 60px #003e2040}#installCard::backdrop{background:#10251bcc;backdrop-filter:blur(3px)}#installCard .install-actions{margin-top:20px}#installApp{flex:1}#installHelp:not([hidden]){max-width:568px;margin:12px auto;padding:16px;background:#eaf7df;border-radius:12px}
+</style><link rel="stylesheet" href="./mobile.css">
+<header><b class="brand" aria-label="Meu Mercado"><img class="brand-icon" src="data:image/png;base64,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" width="40" height="40" alt=""><span>Meu <span class="brand-market">Mercado</span></span></b><button id="accountButton" class="secondary" type="button">Entrar</button></header><div class="save-strip"><span id="cloudStatus" role="status">Salvo neste aparelho</span><button id="quickSave" type="button" hidden>Salvar na conta</button></div><dialog id="installCard" aria-labelledby="installTitle" aria-describedby="installDescription"><h2 id="installTitle">Seu mercado, sempre à mão</h2><p id="installDescription">Adicione o Meu Mercado à tela inicial para abrir sua lista com um toque, acompanhar o carrinho e consultar suas compras.</p><div class="install-actions"><button id="installApp" type="button">Instalar</button><button id="dismissInstall" type="button" class="secondary">Agora não</button></div></dialog><p id="installHelp" role="status" hidden></p>
+<main><section class="cart-top" aria-labelledby="cartTitle"><div class="cart-top-line"><div><h1 id="cartTitle">Meu carrinho</h1><strong id="total" aria-live="polite"></strong></div><button id="finishPurchase" type="button" disabled>Finalizar compra</button></div><div class="cart-progress"><p id="count"></p><progress id="progress" value="0" max="1" aria-label="Produtos no carrinho"></progress></div><small>O total soma os itens marcados com preço.</small></section>
+<nav class="bottom-nav" aria-label="Navegação principal"><button data-tab="lista"><span aria-hidden="true">☷</span>Lista</button><button data-tab="calcular"><span aria-hidden="true">±</span>Calculadora</button><button data-tab="comparar"><span aria-hidden="true">⇄</span>Comparar embalagens</button><button data-tab="ferramentas"><span aria-hidden="true">⊞</span>Ferramentas</button></nav>
+<div class="layout"><div class="box">
+<section id="lista"><button id="useMyBase" type="button" class="secondary base-shortcut">▤ Usar minha lista base</button><div id="listBuilder"><button id="openReceipt" type="button" class="receipt-open">📷 Importar notinha</button><h2>Adicionar produto</h2><form id="add"><label>Produto<input name="produto" placeholder="Ex. Arroz integral" maxlength="90" required></label>
+<label>Categoria<select id="addCategory"><option value="">Automática pelo produto</option></select></label>
+<details id="categoryCreator"><summary>Criar categoria</summary><label>Nome da categoria<input id="categoryName" maxlength="40" placeholder="Ex.: Congelados"></label><button id="createCategory" class="secondary" type="button">Salvar categoria</button></details>
+<div class="fields"><label>Quantidade<input name="q" type="number" min=".001" step=".001" value="1" required></label><label>Unidade<select name="u"><option>un</option><option>kg</option><option>L</option></select></label></div><label><span id="addPriceLabel">Preço atual de cada unidade (R$)</span><input name="p" type="number" step=".01" min="0" placeholder="Ex.: 5,99" inputmode="decimal"></label><small>Opcional agora. Você pode preencher o preço atual quando estiver no mercado.</small><output id="addEstimate" aria-live="polite"></output><button>+ Adicionar à lista</button></form><button id="listReady" type="button" class="secondary">✓ Lista pronta — começar as compras</button></div><button id="toggleBuilder" type="button" aria-label="Adicionar produtos ou importar notinha" title="Adicionar produtos ou importar notinha" aria-controls="listBuilder" aria-expanded="false" hidden><span aria-hidden="true">+</span> Adicionar produtos</button><div class="section shopping-items"><h2>Minha lista</h2><label class="preference-check category-toggle"><input id="groupCategories" type="checkbox"> Separar por categorias</label><div id="rows"></div></div></section>
+<section id="ferramentas" hidden><h2>Facilite sua compra</h2><p class="muted">Planeje sua lista e compare preços antes de comprar.</p><div class="tool-grid"><button data-tab="historico"><strong>Histórico de compras</strong><small>Consulte os produtos e valores das compras finalizadas.</small></button><button data-tab="mensal"><strong>Preços do mês passado</strong><small>Veja o que aumentou ou ficou mais barato.</small></button><button data-tab="bases"><strong>Listas base</strong><small>Crie e reutilize suas listas de compras.</small></button></div></section><section id="bases" hidden>
+<h2>Listas base</h2><p class="muted">Salve suas compras habituais ou personalize uma sugestão para a próxima compra.</p>
+<form id="saveBase"><h3>Salvar minha lista como base</h3><label>Nome da lista<input name="title" maxlength="60" placeholder="Ex.: Compras de casa" required></label><div class="fields"><label>Essa quantidade dura quantos dias?<input name="days" type="number" min="1" max="90" value="7" required></label><label>Para quantas pessoas?<input name="people" type="number" min="1" max="20" value="1" required></label></div><small>Salva todos os produtos da lista atual, sem preços e sem alterar sua compra.</small><button>Salvar lista base</button></form>
+<div class="section"><h3>Gerar uma compra</h3><form id="generateBase"><label>Escolha uma base<select name="base" id="baseChoice"><option value="fit">Fit — ingredientes variados</option><option value="economica">Econômica — básicos do dia a dia</option></select></label><div class="fields"><label>Precisa durar quantos dias?<input name="days" type="number" min="1" max="90" value="7" required></label><label>Quantas pessoas?<input name="people" type="number" min="1" max="20" value="1" required></label></div><label>Preferência alimentar<select name="diet"><option value="all">Sem preferência</option><option value="vegetarian">Vegetariana (com ovos e leite)</option><option value="vegan">Vegana</option></select></label><label class="preference-check"><input name="noMilk" type="checkbox"> Evitar leite e derivados</label><label>Alimentos a evitar<input name="avoid" placeholder="Ex.: banana, peixe, amendoim" maxlength="250"></label><small>Separe os alimentos por vírgula. As exclusões usam os nomes dos produtos; confira ingredientes e rótulos se houver alergia.</small><button>Gerar sugestões</button></form></div>
+<p id="baseStatus" role="status"></p>
+<form id="baseReview" class="section" hidden><h3>Revise sua próxima compra</h3><p id="baseReviewSummary"></p><p class="muted">Quantidades iniciais para planejamento, não um cardápio. Ajuste ao consumo da casa e ao que já tem. O modelo Econômica não consulta preços locais.</p><div id="baseDraftRows"></div><button id="addBaseDraft" type="button" class="secondary">+ Incluir produto</button><label>Nome para salvar esta base<input id="draftBaseName" maxlength="60" placeholder="Minha lista personalizada"></label><button id="saveDraftBase" type="button" class="secondary">Salvar como nova lista base</button><button type="submit">Adicionar à minha lista</button><small>Acrescenta os produtos sem preços. Itens que já estão na lista não são substituídos.</small></form>
+<div class="section"><h3>Minhas listas base</h3><div id="savedBases"></div></div></section>
+<section id="mensal" hidden><h2>Comparar com o mês passado</h2><label>O que comparar?<select id="monthSource"><option value="lista">Produtos da minha lista</option><option value="historico">Compras finalizadas neste mês</option></select></label><p id="monthExplanation" class="muted"></p><div id="monthRows"></div></section><section id="historico" hidden><h2>Histórico de compras</h2><p class="muted">Suas compras finalizadas, com os produtos e preços registrados naquele dia.</p><div id="historyRows"></div><small>Entre na sua conta para guardar suas compras na nuvem.</small></section><section id="comparar" hidden><h2>Comparar embalagens</h2><p class="muted">Informe o preço e o conteúdo de cada embalagem.</p><form id="compare"></form><output id="result"></output></section>
+<section id="calcular" hidden><h2>Calculadora do mercado</h2><p class="muted">Calcule o valor de várias unidades ou de um produto por peso.</p><form id="calc"><label>Preço por unidade, kg ou litro (R$)<input name="p" type="number" step=".01" min=".01" required></label><label>Quantidade, peso em kg ou volume em litros<input name="q" type="number" step=".001" min=".001" value="1" required></label><button>Calcular subtotal</button></form><output id="subtotal"></output></section></div>
+</div><p role="status" id="status"></p></main>
+<dialog id="receipt" aria-labelledby="receiptTitle">
+
+<div class="receipt-heading"><h2 id="receiptTitle">Importar notinha</h2><button type="button" id="closeReceipt" class="secondary" aria-label="Cancelar importação e fechar">Fechar</button></div>
+<p>A foto é processada neste navegador. É necessária internet para carregar o leitor; a imagem não é enviada para um servidor.</p>
+<div id="receiptDrop" tabindex="0" aria-label="Área para arrastar ou colar a foto"><strong>Arraste a foto para cá ou cole com Ctrl+V</strong><p>Você também pode copiar uma captura de tela da notinha.</p><button id="pasteReceipt" type="button" class="secondary">Colar imagem copiada</button></div><p id="receiptFilename" role="status"></p><label>Ou escolha um arquivo (JPG, PNG ou WebP, até 50 MB)<input id="receiptFile" type="file" accept="image/jpeg,image/png,image/webp"></label>
+<img id="receiptPhoto" alt="Foto da notinha para conferir os produtos" hidden>
+<div class="receipt-actions"><button id="readReceipt" type="button">Reconhecer produtos</button><button id="manualReceipt" class="secondary" type="button">Revisar manualmente</button></div>
+<p id="receiptStatus" role="status" aria-live="polite"></p><progress id="receiptProgress" max="1" aria-label="Progresso da leitura" hidden></progress>
+<form id="receiptReview" hidden>
+<h3>Confira antes de adicionar</h3>
+<p class="muted">Use a notinha como ponto de partida: confira os produtos e escolha quanto vai comprar desta vez. Preços e descontos antigos não entram na lista.</p>
+<div id="receiptRows"></div>
+<button id="addReceiptRow" class="secondary" type="button">+ Incluir produto faltante</button>
+<details><summary>Ver ou corrigir o texto reconhecido</summary><label>Texto da notinha<textarea id="receiptText" spellcheck="false"></textarea></label><button id="parseReceiptText" type="button" class="secondary">Refazer sugestões a partir do texto</button></details>
+<output id="receiptTotal" aria-live="polite"></output>
+<button id="confirmReceipt" type="submit" disabled>Adicionar produtos revisados à lista</button>
+</form></dialog>
+<script>
+const $=id=>document.getElementById(id);
+const money=n=>n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const fmt=n=>n.toLocaleString('pt-BR',{maximumFractionDigits:3});
+const cents=(price,q)=>Math.round(Math.round(price*100)*q);
+const itemCents=i=>Math.max(0,cents(i.p??0,i.q)-Math.round((i.discount||0)*100));
+let key='feirinha.estado.v2';
+let cloudRevision=0,cloudDirty=false;
+let items=[],purchases=[],baseLists=[],customCategories=[],groupCategories=false,storageReadable=true;
+try{
+ const raw=localStorage.getItem(key);
+ if(raw){const state=JSON.parse(raw);if(!Array.isArray(state.items)||!Array.isArray(state.purchases))throw new Error('invalid');items=state.items;purchases=state.purchases;baseLists=Array.isArray(state.baseLists)?state.baseLists:[];customCategories=readCustomCategories(state);groupCategories=state.groupCategories===true;}
+ else {items=JSON.parse(localStorage.getItem('feirinha.lista.v1')||'[]');if(!Array.isArray(items))throw new Error('invalid');}
+}catch{storageReadable=false;items=[];purchases=[];$('status').textContent='Não foi possível ler os dados salvos. Reabra o app antes de finalizar uma compra.'}
+function persist(nextItems=items,nextPurchases=purchases,nextBases=baseLists){
+ try{if(!storageReadable)throw new Error('unreadable');localStorage.setItem(key,JSON.stringify({items:nextItems,purchases:nextPurchases,baseLists:nextBases,customCategories,groupCategories,cloudRevision,cloudDirty:true}));cloudDirty=true;window.dispatchEvent(new Event('market-change'));return true;}
+ catch{$('status').textContent='Não foi possível salvar no navegador. A compra não será finalizada; mantenha esta aba aberta.';return false;}
+}
+function save(redraw=true){persist();if(redraw)render();else renderTotals()}
+function monthId(date){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit'}).formatToParts(date).filter(p=>p.type==='year'||p.type==='month').reduce((o,p)=>(o[p.type]=p.value,o),{});}
+function monthWindow(now=new Date()){
+ const m=monthId(now),year=Number(m.year),month=Number(m.month);
+ return {current:m.year+'-'+m.month,previous:(month===1?year-1:year)+'-'+String(month===1?12:month-1).padStart(2,'0')};
+}
+function purchaseMonth(p){const d=new Date(p.finishedAt);if(!Number.isFinite(d.getTime()))return '';const m=monthId(d);return m.year+'-'+m.month;}
+const productName=name=>String(name).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+const validPrice=i=>typeof i.p==='number'&&Number.isFinite(i.p)&&i.p>=0;
+function comparePreviousMonth(current,history,now=new Date()){
+ const period=monthWindow(now);
+ const previous=history.filter(p=>purchaseMonth(p)===period.previous).sort((a,b)=>new Date(b.finishedAt)-new Date(a.finishedAt)).flatMap(p=>p.items.map(item=>({item,date:p.finishedAt})));
+ return current.map(item=>{
+  const sameCode=item.code?previous.filter(r=>r.item.code&&r.item.code===item.code):[];
+  let candidates=sameCode.length?sameCode:previous.filter(r=>productName(r.item.name)===productName(item.name)&&(!item.code||!r.item.code||r.item.code===item.code));
+  if(!sameCode.length && new Set(candidates.map(r=>r.item.code).filter(Boolean)).size>1)return {item,reason:'Mais de um produto com esse nome no histórico. Não foi possível identificar com segurança.'};
+  if(!candidates.length)return {item,reason:'Sem registro deste produto no mês passado.'};
+  candidates=candidates.filter(r=>r.item.u===item.u);
+  if(!candidates.length)return {item,reason:'A unidade do histórico é diferente. Não é possível comparar diretamente.'};
+  const baseline=candidates.find(r=>validPrice(r.item));
+  if(!baseline)return {item,reason:'O produto estava sem preço no histórico do mês passado.'};
+  if(!validPrice(item))return {item,baseline,reason:'Informe o preço atual na lista para calcular a diferença.'};
+  const delta=Math.round((item.p-baseline.item.p)*100)/100;
+  return {item,baseline,delta,percent:baseline.item.p===0?null:delta/baseline.item.p*100};
+ });
+}
+function renderMonthComparison(){
+ const period=monthWindow();
+ const [year,month]=period.previous.split('-');
+ const label=new Date(Date.UTC(Number(year),Number(month)-1,15,12)).toLocaleDateString('pt-BR',{month:'long',year:'numeric',timeZone:'America/Sao_Paulo'});
+ $('monthExplanation').textContent='Referência: '+label+'. Usamos o último preço informado nesse mês para o mesmo código ou nome e a mesma medida. Comparamos o preço por unidade, kg ou litro, antes de descontos.';
+ let current=items;
+ if($('monthSource').value==='historico'){
+  const seen=new Set();current=[];
+  for(const purchase of [...purchases].filter(p=>purchaseMonth(p)===period.current).sort((a,b)=>new Date(b.finishedAt)-new Date(a.finishedAt))){
+   for(const item of purchase.items){const id=(item.code?'code:'+item.code:'name:'+productName(item.name))+'|'+item.u;if(!seen.has(id)){seen.add(id);current.push(item);}}
+  }
+  $('monthExplanation').textContent+=' Para este mês, usamos a compra mais recente de cada produto.';
+ }
+ $('monthRows').replaceChildren();
+ if(!current.length){$('monthRows').textContent=$('monthSource').value==='lista'?'Sua lista está vazia. Você também pode comparar as compras finalizadas neste mês.':'Nenhuma compra finalizada neste mês.';return;}
+ for(const result of comparePreviousMonth(current,purchases)){
+  const card=document.createElement('article');card.className='month-card';
+  const title=document.createElement('h3');title.textContent=result.item.name;card.append(title);
+  const values=document.createElement('p');values.textContent='Atual: '+(validPrice(result.item)?money(result.item.p)+'/'+result.item.u:'sem preço');
+  if(result.baseline)values.textContent+=' · Mês passado: '+money(result.baseline.item.p)+'/'+result.item.u;
+  card.append(values);
+  const verdict=document.createElement('p');
+  if(result.reason)verdict.textContent=result.reason;
+  else {verdict.className=result.delta>0?'price-up':result.delta<0?'price-down':'';verdict.textContent=result.delta===0?'Mesmo preço.':(result.delta>0?'Aumentou ':'Diminuiu ')+money(Math.abs(result.delta))+'/'+result.item.u+(result.percent===null?' · Variação percentual indisponível: preço anterior era zero.':' ('+Math.abs(result.percent).toLocaleString('pt-BR',{maximumFractionDigits:1})+'%).');}
+  card.append(verdict);
+  if(result.baseline){const date=document.createElement('small');date.textContent='Preço registrado em '+new Date(result.baseline.date).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'});card.append(date);}
+  $('monthRows').append(card);
+ }
+}
+$('monthSource').onchange=renderMonthComparison;
+function renderHistory(){
+ $('historyRows').replaceChildren();
+ if(!purchases.length){$('historyRows').textContent='Nenhuma compra finalizada ainda.';return;}
+ for(const purchase of purchases){
+  const card=document.createElement('details');card.className='history-card';
+  const summary=document.createElement('summary');
+  const when=new Date(purchase.finishedAt).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
+  const missing=purchase.items.filter(i=>i.p==null).length;
+  summary.textContent=when+' · '+purchase.items.length+' produtos · '+(missing?'Total parcial: ':'')+money(purchase.totalCents/100);
+  card.append(summary);
+  if(missing){const note=document.createElement('p');note.textContent=missing+' produto(s) sem preço informado ao finalizar.';card.append(note);}
+  for(const item of purchase.items){const line=document.createElement('div');line.className='history-item';const name=document.createElement('strong');name.textContent=item.name;const values=document.createElement('small');values.textContent=fmt(item.q)+' '+item.u+(item.p==null?' · Preço não informado':' · '+money(item.p)+'/'+item.u+(item.discount?' · Desconto '+money(item.discount):'')+' · Total '+money(itemCents(item)/100));line.append(name,values);card.append(line);}
+  $('historyRows').append(card);
+ }
+}
+$('finishPurchase').onclick=()=>{
+ const bought=items.filter(i=>i.done);if(!bought.length)return;
+ for(const row of $('rows').children){if(row.querySelector('[type=checkbox]')?.checked){const invalid=row.querySelector('input:invalid');if(invalid){selectTab('lista');invalid.reportValidity();invalid.focus();$('status').textContent='Corrija a quantidade ou o preço antes de finalizar.';return;}}}
+ const purchase={id:crypto.randomUUID(),finishedAt:new Date().toISOString(),items:bought.map(i=>({...i})),totalCents:bought.reduce((sum,i)=>sum+itemCents(i),0)};
+ const remaining=items.filter(i=>!i.done),nextPurchases=[purchase,...purchases];
+ if(!persist(remaining,nextPurchases))return;
+ items=remaining;purchases=nextPurchases;render();renderHistory();selectTab('historico');
+ $('status').textContent='Compra finalizada e salva no histórico.'+(remaining.length?' '+remaining.length+' produto(s) ainda na lista.':' Sua lista está pronta para a próxima compra.');
+};
+function renderTotals(){
+ const bought=items.filter(i=>i.done);
+ $('finishPurchase').disabled=!bought.length||!storageReadable;
+ $('total').textContent=money(bought.reduce((sum,i)=>sum+itemCents(i),0)/100);
+ $('count').textContent=bought.length+' de '+items.length+' itens no carrinho';
+ const missing=bought.filter(i=>i.p==null).length;
+ if(missing) $('count').textContent+=' · '+missing+' sem preço';
+ $('progress').max=items.length||1;$('progress').value=bought.length;
+}
+const defaultCategories=['Hortifruti','Açougue','Peixaria','Padaria','Laticínios e ovos','Mercearia','Bebidas','Limpeza','Higiene','Petshop','Outros'];
+function readCustomCategories(state) {
+  if (!Array.isArray(state.customCategories)) return [];
+  return state.customCategories.filter(name => typeof name === 'string' && name.trim() && name.length <= 40);
+}
+function categoryNames() {
+  return [...new Set([...defaultCategories, ...customCategories])];
+}
+function fillCategoryPicker(selected = '') {
+  const picker = $('addCategory');
+  picker.replaceChildren(new Option('Automática pelo produto', ''));
+  for (const name of categoryNames()) picker.add(new Option(name, name));
+  picker.value = selected;
+}
+function createCategory() {
+  const input = $('categoryName');
+  const name = input.value.trim().replace(/\s+/g, ' ');
+  if (!name) {
+    input.setCustomValidity('Digite um nome para a categoria.');
+    input.reportValidity();
+    return false;
+  }
+  const existing = categoryNames().find(value => value.localeCompare(name, 'pt-BR', { sensitivity: 'base' }) === 0);
+  if (!existing) {
+    customCategories.push(name);
+    if (!persist()) {
+      customCategories.pop();
+      return false;
+    }
+    render();
+  }
+  fillCategoryPicker(existing || name);
+  input.value = '';
+  $('categoryCreator').open = false;
+  $('addCategory').focus();
+  return true;
+}
+$('categoryName').oninput = () => $('categoryName').setCustomValidity('');
+$('categoryCreator').ontoggle = () => {
+  if (!$('categoryCreator').open) $('categoryName').setCustomValidity('');
+};
+$('categoryName').onkeydown = event => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    createCategory();
+  }
+};
+$('createCategory').onclick = createCategory;
+fillCategoryPicker();
+function categoryOf(item){
+ if(defaultCategories.includes(item.category) || customCategories.includes(item.category))return item.category;
+ const name=productName(item.name);
+ const rules=[['Petshop',/\b(racao|pet|petisco|gato|gatos|cachorro|caes|areia sanitaria|tapete higienico)\b/],['Limpeza',/\b(deterg|detergente|sabao|amaciante|desinfetante|agua sanitaria|esponja|esp brilhus|limpador)\b/],['Higiene',/\b(sabonete|shampoo|condicionador|papel higienico|creme dental|desodorante|absorvente)\b/],['Peixaria',/\b(peixe|tilapia|salmao|sardinha|atum|camarao)\b/],['Açougue',/\b(carne|frango|bife|patinho|ac em|acem|costela|linguica|porco|bacon|picanha|alcatra)\b/],['Laticínios e ovos',/\b(leite|queijo|iogurte|manteiga|requeijao|ovo|ovos)\b/],['Hortifruti',/\b(banana|maca|melao|pepino|tomate|cenoura|cebola|batata|abobrinha|repolho|alface|cheiro verde|laranja|limao|uva|brocolis|mamao)\b/],['Padaria',/\b(pao|paes|bolo|torrada)\b/],['Bebidas',/\b(agua|suco|refrigerante|cerveja|vinho)\b/],['Mercearia',/\b(arroz|feijao|aveia|macarrao|espaguete|mac|cafe|lentilha|grao de bico|farinha|acucar|sal|oleo|azeite|biscoito)\b/]];
+ return rules.find(([,rule])=>rule.test(name))?.[0]||'Outros';
+}
+$('groupCategories').checked=groupCategories;
+$('groupCategories').onchange=()=>{groupCategories=$('groupCategories').checked;save();};
+$('useMyBase').onclick=()=>{selectTab('bases');if(baseLists.length){$('baseChoice').value=baseLists[0].id;$('generateBase').scrollIntoView({behavior:'smooth',block:'start'});$('baseStatus').textContent='Escolha sua base, o período e o número de pessoas para gerar a próxima compra.';}else{$('baseStatus').textContent='Você ainda não tem uma base salva. Salve sua lista atual ou personalize um modelo abaixo.';}};
+function render(){
+ renderTotals();
+ $('useMyBase').hidden = items.length > 0;
+ if(!items.length)setBuilderOpen(true);
+ $('listReady').hidden=!items.length;
+ $('rows').replaceChildren();
+ if(!items.length)$('rows').textContent='Sua lista está vazia. Adicione o primeiro produto acima.';
+ const categories=categoryNames();
+ const ordered=groupCategories?[...items].sort((a,b)=>categories.indexOf(categoryOf(a))-categories.indexOf(categoryOf(b))):items;
+ let lastCategory=null;
+ for(const i of ordered){
+ const category=categoryOf(i);
+ if(groupCategories&&category!==lastCategory){const heading=document.createElement('h3');heading.className='category-heading';heading.textContent=category;$('rows').append(heading);lastCategory=category;}
+ const row=document.createElement('div');row.className='row'+(i.done?' done':'');
+ row.innerHTML='<input type="checkbox"><div class="name"><strong></strong><small class="item-summary"></small><div class="inline-fields"><label>Quantidade<input class="item-q" type="number" min=".001" step=".001" inputmode="decimal" required></label><label><span class="item-price-label"></span><input class="item-p" type="number" min="0" step=".01" inputmode="decimal" placeholder="Ex.: 5,99"></label></div></div><button type="button" class="remove" aria-label="Excluir produto">×</button>';
+ const check=row.querySelector('input');check.checked=i.done;check.setAttribute('aria-label','Marcar ou desmarcar '+i.name);
+ row.querySelector('strong').textContent=i.name;
+ const categoryLabel=document.createElement('label');categoryLabel.className='item-category';categoryLabel.textContent='Categoria';const categorySelect=document.createElement('select');categorySelect.setAttribute('aria-label','Categoria de '+i.name);for(const name of categories){const option=document.createElement('option');option.value=name;option.textContent=name;categorySelect.append(option);}categorySelect.value=category;categorySelect.onchange=()=>{i.category=categorySelect.value;save(groupCategories);};categoryLabel.append(categorySelect);const options=document.createElement('details');options.className='item-options';const toggle=document.createElement('summary');toggle.textContent='⋯';toggle.setAttribute('aria-label','Opções de '+i.name);toggle.title='Opções do produto';options.append(toggle,categoryLabel);row.querySelector('.name').prepend(options);
+ const quantity=row.querySelector('.item-q'),price=row.querySelector('.item-p');
+ quantity.value=i.q;price.value=i.p??'';
+ quantity.parentElement.firstChild.textContent='Quantidade ('+i.u+')';
+ quantity.setAttribute('aria-label','Quantidade de '+i.name+' em '+i.u);
+ row.querySelector('.item-price-label').textContent='Preço (R$/'+i.u+')';
+ price.setAttribute('aria-label','Preço de '+i.name+' por '+i.u);
+ const summary=()=>{row.querySelector('.item-summary').textContent=i.p==null?'Preço a informar no mercado':'Total: '+money(itemCents(i)/100)+(i.discount?' · Desconto: '+money(i.discount):'');};
+ let discountInput=null;
+ if(i.discount){const label=document.createElement('label');label.textContent='Desconto (R$)';discountInput=document.createElement('input');discountInput.type='number';discountInput.min='0';discountInput.step='.01';discountInput.value=i.discount;label.append(discountInput);row.querySelector('.inline-fields').append(label);}
+ const update=()=>{
+  const q=quantity.valueAsNumber,p=price.value===''?null:price.valueAsNumber,d=discountInput?Number(discountInput.value):0;
+  price.setCustomValidity('');
+  if(!quantity.validity.valid||!price.validity.valid||!Number.isFinite(q)||q<=0|| (p!==null&&!Number.isFinite(p)) || (discountInput&&!discountInput.validity.valid))return;
+  if(d>0&&(p===null||Math.round(d*100)>cents(p,q))){price.setCustomValidity('O preço total precisa ser maior ou igual ao desconto.');return;}
+  Object.assign(i,{q,p,discount:d});summary();save(false);
+ };
+ quantity.addEventListener('input',update);price.addEventListener('input',update);if(discountInput)discountInput.addEventListener('input',update);
+ for(const input of [quantity,price,discountInput].filter(Boolean))input.addEventListener('blur',()=>input.reportValidity());
+ summary();
+ check.onchange=()=>{i.done=check.checked;row.classList.toggle('done',i.done);save(false)};
+ row.querySelector('.remove').onclick=()=>{items=items.filter(other=>other!==i);save()};
+ $('rows').append(row)
+ }}
+$('add').onsubmit = event => {
+  event.preventDefault();
+  const form = event.target;
+  const fields = form.elements;
+  const name = fields.produto.value.trim();
+  if (!name) { fields.produto.focus(); return; }
+  if ($('categoryCreator').open && $('categoryName').value && !createCategory()) return;
+  const product = {name, q: Number(fields.q.value), u: fields.u.value,
+    p: fields.p.value === '' ? null : Number(fields.p.value), done: false};
+  if ($('addCategory').value) product.category = $('addCategory').value;
+  const next = [...items, product];
+  if (!persist(next)) return;
+  items = next;
+  render();
+  form.reset();
+  $('categoryCreator').open = false;
+  fields.produto.focus();
+};
+function setBuilderOpen(open,focus=false){
+ $('listBuilder').hidden=!open;$('toggleBuilder').hidden=open;$('toggleBuilder').setAttribute('aria-expanded',String(open));$('lista').classList.toggle('shopping-mode',!open);
+ if(focus){if(open)$('add').elements.produto.focus();else $('toggleBuilder').focus();}
+}
+$('listReady').onclick=()=>setBuilderOpen(false,true);
+$('toggleBuilder').onclick=()=>setBuilderOpen(true,true);
+function selectTab(id){if(id==='bases')renderBases();if(id==='mensal'){if(!items.length)$('monthSource').value='historico';renderMonthComparison()}for(const panel of ['lista','bases','historico','mensal','comparar','calcular','ferramentas'])$(panel).hidden=panel!==id;for(const b of document.querySelectorAll('[data-tab]')){const active=b.dataset.tab===id||(b.dataset.tab==='ferramentas'&&['mensal','historico','bases'].includes(id));b.setAttribute('aria-pressed',active)}document.body.dataset.tab=id;}
+for(const b of document.querySelectorAll('[data-tab]'))b.onclick=()=>selectTab(b.dataset.tab);
+for(const letter of ['A','B']){
+ const field=document.createElement('fieldset');field.innerHTML='<legend>Opção '+letter+'</legend><label>Preço da embalagem (R$)<input type="number" min=".01" step=".01" required name="p'+letter+'"></label><div class="fields"><label>Conteúdo<input type="number" min=".001" step=".001" required name="q'+letter+'"></label><label>Medida<select name="u'+letter+'"><option>g</option><option>kg</option><option>ml</option><option>L</option><option>un</option></select></label></div>';$('compare').append(field)}
+const compareButton=document.createElement('button');compareButton.textContent='Comparar embalagens';$('compare').append(compareButton);
+const units={g:['kg',.001],kg:['kg',1],ml:['L',.001],L:['L',1],un:['un',1]};
+$('compare').onsubmit=e=>{e.preventDefault();const f=e.target.elements;
+ const options=['A','B'].map(letter=>{const [u,k]=units[f['u'+letter].value];return {u,rate:f['p'+letter].value/(f['q'+letter].value*k)}});
+ const [a,b]=options;
+ if(a.u!==b.u){$('result').textContent='Compare duas medidas do mesmo tipo (peso, volume ou unidades).';return}
+ const diff=Math.abs(a.rate-b.rate);
+ const verdict=diff<1e-9?'As duas opções custam o mesmo por '+a.u+'.':'Opção '+(a.rate<b.rate?'A':'B')+' é mais barata ('+fmt(100*diff/Math.max(a.rate,b.rate))+'% de economia).';
+ $('result').textContent=verdict+' A: '+money(a.rate)+'/'+a.u+' · B: '+money(b.rate)+'/'+b.u};
+$('calc').onsubmit=e=>{e.preventDefault();const f=e.target.elements;$('subtotal').textContent='Subtotal: '+money(cents(+f.p.value,+f.q.value)/100)};
+$('calc').oninput=()=>$('subtotal').textContent='';$('compare').oninput=()=>$('result').textContent='';
+function setupQuantity(container){
+ const q=container.querySelector('[name=q]'),u=container.querySelector('[name=u]');
+ if(!q||!u)return;
+ q.inputMode='decimal';
+ u.innerHTML='<option value="un">Unidades</option><option value="kg">Quilos (kg)</option><option value="L">Litros (L)</option>';
+ // Keep the selected measure while making its label easier to read.
+ const help=document.createElement('small');help.className='quantity-help';
+ const wrapper=document.createElement('div');wrapper.className='quantity-stepper';q.before(wrapper);wrapper.append(q);
+ for(const [sign,label] of [[-1,'Diminuir quantidade'],[1,'Aumentar quantidade']]){
+  const button=document.createElement('button');button.type='button';button.textContent=sign<0?'−':'+';button.setAttribute('aria-label',label);
+  button.onclick=()=>{const step=u.value==='un'?1:.1; q.value=Math.max(step,Math.round(((Number(q.value)||0)+sign*step)*1000)/1000);q.dispatchEvent(new Event('input',{bubbles:true}));};
+  if(sign<0)wrapper.prepend(button);else wrapper.append(button);
+ }
+ container.querySelector('.fields').after(help);
+ const update=()=>{const unit=u.value;help.textContent=unit==='un'?'Conte as embalagens: 2 pacotes de 500 g = 2 unidades.':unit==='kg'?'Informe o peso: 500 g = 0,5 kg · 1 kg e 200 g = 1,2 kg.':'Informe o volume: 500 ml = 0,5 L · 1 litro e meio = 1,5 L.';};
+ u.addEventListener('change',update);update();
+}
+setupQuantity($('add'));
+function updateEstimate(){const f=$('add').elements;$('addPriceLabel').textContent='Preço atual '+(f.u.value==='un'?'de cada unidade':f.u.value==='kg'?'por quilo':'por litro')+' (R$)';$('addEstimate').textContent=f.p.value!==''&&f.q.value!==''?'Total deste produto: '+money(cents(+f.p.value,+f.q.value)/100):'';}
+$('add').addEventListener('input',updateEstimate);$('add').addEventListener('change',updateEstimate);$('add').addEventListener('reset',()=>setTimeout(()=>{$('add').elements.u.dispatchEvent(new Event('change'));updateEstimate()},0));
+const baseCatalog=[
+ {name:'Arroz',q:.5,u:'kg',tags:[],both:true},{name:'Feijão',q:.35,u:'kg',tags:[],both:true},
+ {name:'Aveia',q:.25,u:'kg',tags:[],both:true},{name:'Ovos',q:6,u:'un',tags:['egg'],both:true},
+ {name:'Frango',q:.7,u:'kg',tags:['meat'],both:true},{name:'Banana',q:1,u:'kg',tags:[],both:true},
+ {name:'Cenoura',q:.4,u:'kg',tags:[],both:true},{name:'Tomate',q:.4,u:'kg',tags:[],both:true},
+ {name:'Cebola',q:.2,u:'kg',tags:[],both:true},{name:'Leite',q:1,u:'L',tags:['milk'],both:true},
+ {name:'Batata',q:.7,u:'kg',tags:[],model:'economica'}, {name:'Macarrão',q:.25,u:'kg',tags:[],model:'economica'},
+ {name:'Repolho',q:.4,u:'kg',tags:[],model:'economica'},
+ {name:'Lentilha',q:.25,u:'kg',tags:[],model:'fit'},{name:'Abobrinha',q:.4,u:'kg',tags:[],model:'fit'},
+ {name:'Maçã',q:.6,u:'kg',tags:[],model:'fit'},{name:'Iogurte natural (170 g)',q:3,u:'un',tags:['milk'],model:'fit'}
+];
+function baseExcluded(item,prefs){
+ const name=productName(item.name),tags=item.tags||[];
+ const meat=tags.includes('meat')||/\b(frango|carne|peixe|atum|sardinha|presunto|bacon|linguica|porco|camarao)\b/.test(name);
+ const egg=tags.includes('egg')||/\b(ovo|ovos)\b/.test(name);
+ const milk=tags.includes('milk')||/\b(leite|queijo|iogurte|manteiga|requeijao)\b/.test(name);
+ return ((prefs.diet==='vegetarian'||prefs.diet==='vegan')&&meat)||(prefs.diet==='vegan'&&egg)||((prefs.noMilk||prefs.diet==='vegan')&&milk)||prefs.avoid.split(',').map(productName).filter(Boolean).some(term=>name.includes(term));
+}
+function makeBaseDraft(source,days,people,prefs){
+ const factor=days*people/(source.days*source.people);
+ return source.items.filter(i=>!baseExcluded(i,prefs)).map(i=>({name:i.name,category:categoryOf(i),u:i.u,q:i.u==='un'?Math.max(1,Math.ceil(i.q*factor)):Math.max(.05,Math.ceil(i.q*factor*20-1e-8)/20)}));
+}
+let draftPeriod={days:7,people:1};
+function renderBases(){
+ const select=$('baseChoice'),old=select.value;
+ select.replaceChildren();
+ for(const [value,label] of [['fit','Fit — ingredientes variados'],['economica','Econômica — básicos do dia a dia'],...baseLists.map(b=>[b.id,b.name])]){const o=document.createElement('option');o.value=value;o.textContent=label;select.append(o);}
+ if([...select.options].some(o=>o.value===old))select.value=old;
+ $('savedBases').replaceChildren();
+ if(!baseLists.length)$('savedBases').textContent='Você ainda não salvou uma lista base.';
+ for(const base of baseLists){const card=document.createElement('article');card.className='month-card';const title=document.createElement('h3');title.textContent=base.name;const summary=document.createElement('p');summary.textContent=base.items.length+' produtos · '+base.days+' dias · '+base.people+' pessoa(s)';const use=document.createElement('button');use.type='button';use.textContent='Usar esta base';use.onclick=()=>{$('baseChoice').value=base.id;$('generateBase').elements.days.value=base.days;$('generateBase').elements.people.value=base.people;$('generateBase').scrollIntoView({behavior:'smooth',block:'center'});};card.append(title,summary,use);$('savedBases').append(card);}
+}
+function storeBase(name,products,days,people){
+ if(!name.trim()||!products.length){$('baseStatus').textContent='Informe um nome e ao menos um produto para salvar.';return false;}
+ const next=[...baseLists,{id:crypto.randomUUID(),name:name.trim(),days,people,items:products.map(i=>({name:i.name,q:i.q,u:i.u,category:categoryOf(i)}))}];
+ if(!persist(items,purchases,next)){$('baseStatus').textContent='Não foi possível salvar a lista base neste navegador.';return false;}
+ baseLists=next;renderBases();$('baseStatus').textContent='Lista base salva. Você pode reutilizá-la em novas compras.';return true;
+}
+$('saveBase').onsubmit=e=>{e.preventDefault();const f=e.target.elements;
+ if(!items.length){$('baseStatus').textContent='Adicione produtos à sua lista ou gere uma sugestão abaixo antes de salvar uma base.';return;}
+ if(document.querySelector('#rows input:invalid')){$('baseStatus').textContent='Corrija os campos da lista atual antes de salvá-la como base.';return;}
+ storeBase(f.title.value,items,+f.days.value,+f.people.value);
+};
+function addBaseDraft(item={name:'',q:1,u:'un'}){
+ const row=document.createElement('fieldset');row.className='base-draft';row.dataset.category=item.category||'';
+ row.innerHTML='<label>Produto<input name="name" required maxlength="90"></label><div class="fields"><label>Quantidade<input name="q" type="number" min=".001" step=".001" inputmode="decimal" required></label><label>Medida<select name="u"><option value="un">Unidades</option><option value="kg">Quilos</option><option value="L">Litros</option></select></label></div><button type="button" class="secondary">Remover</button>';
+ for(const name of ['name','q','u'])row.querySelector('[name='+name+']').value=item[name];row.querySelector('button').onclick=()=>row.remove();$('baseDraftRows').append(row);
+}
+$('addBaseDraft').onclick=()=>addBaseDraft();
+$('generateBase').onsubmit=e=>{e.preventDefault();const f=e.target.elements;let source;
+ if(['fit','economica'].includes(f.base.value)){
+  const list=baseCatalog.filter(i=>i.both||i.model===f.base.value);
+  if(f.diet.value!=='all')list.push({name:'Grão-de-bico',q:.35,u:'kg',tags:[]});
+  source={days:7,people:1,items:list};
+ }else source=baseLists.find(b=>b.id===f.base.value);
+ if(!source)return;
+ draftPeriod={days:+f.days.value,people:+f.people.value};
+ const draft=makeBaseDraft(source,draftPeriod.days,draftPeriod.people,{diet:f.diet.value,noMilk:f.noMilk.checked,avoid:f.avoid.value});
+ $('baseDraftRows').replaceChildren();draft.forEach(addBaseDraft);$('baseReview').hidden=false;
+ $('draftBaseName').value='';$('baseReviewSummary').textContent=draft.length+' produtos sugeridos para '+draftPeriod.days+' dias e '+draftPeriod.people+' pessoa(s).';
+ $('baseStatus').textContent=draft.length?'Sugestão gerada. Revise as quantidades antes de usar.':'As preferências removeram todos os produtos. Ajuste os filtros ou inclua produtos manualmente.';
+};
+function readBaseDraft(){
+ if(!$('baseReview').reportValidity())return null;
+ const rows=[...$('baseDraftRows').children];if(!rows.length){$('baseStatus').textContent='Inclua pelo menos um produto.';return null;}
+ const draft=rows.map(row=>({name:row.querySelector('[name=name]').value.trim(),q:Number(row.querySelector('[name=q]').value),u:row.querySelector('[name=u]').value,category:row.dataset.category||undefined}));
+ if(draft.some(i=>!i.name||!Number.isFinite(i.q)||i.q<=0)){$('baseStatus').textContent='Confira os nomes e quantidades.';return null;}return draft;
+}
+$('saveDraftBase').onclick=()=>{const draft=readBaseDraft();if(draft)storeBase($('draftBaseName').value,draft,draftPeriod.days,draftPeriod.people);};
+$('baseReview').onsubmit=e=>{e.preventDefault();const draft=readBaseDraft();if(!draft)return;
+ const next=[...items,...draft.map(i=>({...i,p:null,discount:0,done:false}))];if(!persist(next,purchases))return;
+ items=next;render();$('baseReview').hidden=true;$('baseDraftRows').replaceChildren();selectTab('lista');setBuilderOpen(false,true);$('status').textContent=draft.length+' produtos adicionados sem preços. Informe os valores atuais no mercado.';
+};
+renderBases();
+
+
+window.marketStore={
+ read:()=>JSON.parse(JSON.stringify({items,purchases,baseLists,customCategories,groupCategories})),
+ meta:()=>({revision:cloudRevision,dirty:cloudDirty,readable:storageReadable}),
+ guest:()=>JSON.parse(localStorage.getItem('feirinha.estado.v2')||JSON.stringify({items:JSON.parse(localStorage.getItem('feirinha.lista.v1')||'[]'),purchases:[],baseLists:[],groupCategories:false})),
+ valid:s=>!!s&&Array.isArray(s.items)&&Array.isArray(s.purchases)&&Array.isArray(s.baseLists)&&s.items.every(i=>i&&typeof i.name==='string'&&Number.isFinite(i.q)&&i.q>0&&['un','kg','L'].includes(i.u))&&s.purchases.every(p=>p&&typeof p.finishedAt==='string'&&Array.isArray(p.items))&&s.baseLists.every(b=>b&&Array.isArray(b.items)),
+ switchUser(id){const nextKey=id?'meu-mercado.account.'+id:'feirinha.estado.v2';key=nextKey;this.apply({items:[],purchases:[],baseLists:[]},false);storageReadable=false;$('closeReceipt').click();for(const form of ['add','saveBase','generateBase'])$(form).reset();$('baseReview').hidden=true;$('baseDraftRows').replaceChildren();$('baseStatus').textContent='';$('status').textContent='';selectTab('lista');const raw=localStorage.getItem(nextKey);const state=raw?JSON.parse(raw):(id?{items:[],purchases:[],baseLists:[]}:this.guest());if(!this.valid({...state,baseLists:state.baseLists||[]}))throw Error('Dados locais inválidos');this.apply(state,false);storageReadable=true;return !!raw;},
+ apply(state,write=true){if(!this.valid({...state,baseLists:state.baseLists||[]}))throw Error('Dados inválidos');if(write){localStorage.setItem(key,JSON.stringify(state));storageReadable=true;}items=state.items;purchases=state.purchases;baseLists=state.baseLists||[];customCategories=readCustomCategories(state);fillCategoryPicker();$('categoryCreator').open=false;$('categoryName').value='';$('categoryName').setCustomValidity('');groupCategories=state.groupCategories===true;cloudRevision=state.cloudRevision||0;cloudDirty=state.cloudDirty===true;$('groupCategories').checked=groupCategories;render();renderHistory();renderBases();setBuilderOpen(!items.length);window.dispatchEvent(new Event('market-change'));},
+ markSaved(snapshot,revision){const dirty=JSON.stringify(this.read())!==JSON.stringify(snapshot);this.apply({...this.read(),cloudRevision:revision,cloudDirty:dirty});}
+};
+
+selectTab('lista');render();renderHistory();setBuilderOpen(!items.length);
+</script>
+<script src="./receipt-parser.js"></script>
+<script src="./receipt.js"></script>
+<dialog id="accountDialog" aria-labelledby="accountTitle"><div class="dialog-top"><h2 id="accountTitle">Suas listas, com você</h2><button id="closeAccount" class="secondary" aria-label="Fechar conta" type="button">×</button></div><p class="muted">Guarde listas, bases e histórico para acessar em outro celular.</p><p id="accountMessage" role="status"></p><form id="authForm"><label>E-mail<input id="authEmail" type="email" autocomplete="email" required placeholder="voce@email.com"></label><label>Senha<input id="authPassword" type="password" autocomplete="current-password" minlength="8" required placeholder="Pelo menos 8 caracteres"></label><button id="loginSubmit" type="submit">Entrar</button><button id="signupButton" class="secondary" type="button">Criar minha conta</button><button id="resetPassword" class="text-button" type="button">Esqueci minha senha</button></form><form id="newPasswordForm" hidden><label>Nova senha<input id="newPassword" type="password" autocomplete="new-password" minlength="8" required></label><button type="submit">Salvar nova senha</button></form><div id="accountSignedIn" hidden><p id="accountEmail"></p><div class="account-actions"><button id="saveCloud" type="button">Salvar minhas listas na conta</button><button id="loadCloud" type="button" class="secondary">Carregar listas da conta</button><button id="importGuest" type="button" class="secondary">Copiar listas deste aparelho</button><button id="restoreBackup" type="button" class="secondary" hidden>Recuperar cópia anterior</button><button id="logoutButton" type="button" class="text-button">Sair da conta</button></div><small>Você escolhe quando salvar. Alterações feitas sem internet continuam neste aparelho até tocar em salvar.</small></div><p class="muted account-note">Você também pode continuar sem login.</p></dialog><script src="./supabase-config.js"></script><script src="./vendor/supabase-2.119.0.js"></script><script src="./cloud.js"></script><script src="./install.js"></script>
+</html>
