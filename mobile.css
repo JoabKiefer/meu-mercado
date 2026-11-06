@@ -8,6 +8,8 @@ body{background:#f4f7f3}header{gap:12px;padding-top:18px}header .brand{font-size
 .simple-list .row>input[type=checkbox] {margin:0}
 .simple-list .row .name {display:grid; grid-template-columns:minmax(0,1fr) minmax(90px,7rem); align-items:center; gap:8px}
 .simple-list .row .name>strong {min-height:0; padding:0}
+.simple-quantity {display:none}
+.simple-list .simple-quantity {display:inline-block; white-space:pre; font-weight:500}
 .simple-list .inline-fields {display:block; margin:0}
 .simple-list .item-options, .simple-list .item-summary, .simple-list .remove, .simple-list .inline-fields label:not(:nth-child(2)) {display:none}
 .simple-list .item-price-label {font-size:11px}

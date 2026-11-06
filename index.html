@@ -295,6 +295,9 @@ function render(){
  row.innerHTML='<input type="checkbox"><div class="name"><strong></strong><small class="item-summary"></small><div class="inline-fields"><label>Quantidade<input class="item-q" type="number" min=".001" step=".001" inputmode="decimal" required></label><label><span class="item-price-label"></span><input class="item-p" type="number" min="0" step=".01" inputmode="decimal" placeholder="Ex.: 5,99"></label></div></div><button type="button" class="remove" aria-label="Excluir produto">×</button>';
  const check=row.querySelector('input');check.checked=i.done;check.setAttribute('aria-label','Marcar ou desmarcar '+i.name);
  row.querySelector('strong').textContent=i.name;
+ const quantityText = document.createElement('span');
+ quantityText.className = 'simple-quantity';
+ row.querySelector('strong').append(quantityText);
  const categoryLabel=document.createElement('label');categoryLabel.className='item-category';categoryLabel.textContent='Categoria';const categorySelect=document.createElement('select');categorySelect.setAttribute('aria-label','Categoria de '+i.name);for(const name of categories){const option=document.createElement('option');option.value=name;option.textContent=name;categorySelect.append(option);}categorySelect.value=category;categorySelect.onchange=()=>{i.category=categorySelect.value;save(groupCategories);};categoryLabel.append(categorySelect);const options=document.createElement('details');options.className='item-options';const toggle=document.createElement('summary');toggle.textContent='⋯';toggle.setAttribute('aria-label','Opções de '+i.name);toggle.title='Opções do produto';options.append(toggle,categoryLabel);row.querySelector('.name').prepend(options);
  const quantity=row.querySelector('.item-q'),price=row.querySelector('.item-p');
  quantity.value=i.q;price.value=i.p??'';
@@ -302,7 +305,11 @@ function render(){
  quantity.setAttribute('aria-label','Quantidade de '+i.name+' em '+i.u);
  row.querySelector('.item-price-label').textContent='Preço (R$/'+i.u+')';
  price.setAttribute('aria-label','Preço de '+i.name+' por '+i.u);
- const summary=()=>{row.querySelector('.item-summary').textContent=i.p==null?'Preço a informar no mercado':'Total: '+money(itemCents(i)/100)+(i.discount?' · Desconto: '+money(i.discount):'');};
+ const summary = () => {
+   quantityText.textContent = ' · ' + fmt(i.q) + ' ' + i.u;
+   row.querySelector('.item-summary').textContent = i.p == null ? 'Preço a informar no mercado' :
+     'Total: ' + money(itemCents(i) / 100) + (i.discount ? ' · Desconto: ' + money(i.discount) : '');
+ };
  let discountInput=null;
  if(i.discount){const label=document.createElement('label');label.textContent='Desconto (R$)';discountInput=document.createElement('input');discountInput.type='number';discountInput.min='0';discountInput.step='.01';discountInput.value=i.discount;label.append(discountInput);row.querySelector('.inline-fields').append(label);}
  const update=()=>{
